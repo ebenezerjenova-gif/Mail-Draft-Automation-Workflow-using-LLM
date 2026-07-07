@@ -1,4 +1,4 @@
-# 📧 AI-Powered Mail Automation using n8n & Gemini LLM
+# 📧 AI-Powered Mail Automation using n8n with Basic LLM Chain with Gemini AI
 
 This project extends a basic mail automation workflow by integrating a **Basic LLM Chain with Gemini AI** in n8n. It fetches user data from Google Sheets and generates **personalized email content based on each user's personality**.
 
