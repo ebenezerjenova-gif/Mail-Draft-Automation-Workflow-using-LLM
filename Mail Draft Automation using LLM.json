@@ -1,0 +1,177 @@
+{
+  "name": "Mail Draft Automation using LLM",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8604dbc8-9533-4dde-9e82-91681d1cc758",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1098HFEcx-rz22_ttFhMOC45p83pj-Cr2cWmxjmPuWmw",
+          "mode": "list",
+          "cachedResultName": "Automation Mail",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1098HFEcx-rz22_ttFhMOC45p83pj-Cr2cWmxjmPuWmw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1098HFEcx-rz22_ttFhMOC45p83pj-Cr2cWmxjmPuWmw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "24a36855-bf5b-4adf-84c3-37fa44823937",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pnqfMKI93FSNKBYk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=To Name: {{ $json.Name }}\nPersonality: {{ $json.Character }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Generate a professional yet friendly email body without subject. The tone and style of the email should reflect the personality type. The content should be on \"Follow-Up on Our Recent Discussion\". Create a short mail content with 90-100 words.  The mail is addressed to \"To name\". \n\nSign the mail as EJ AI\n\nSample output: <text>"
+            }
+          ]
+        },
+        "batching": {
+          "delayBetweenBatches": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        0
+      ],
+      "id": "e7131674-bad7-478e-86a0-687389178fce",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Follow-Up On Our Recent Discussion",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        0
+      ],
+      "id": "6d75477d-a608-4539-823c-bdc5140d6259",
+      "name": "Create a draft",
+      "webhookId": "30ec8c25-93a6-43e4-bb92-99d1aae929d3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZvbQKDix5b3h955C",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        192
+      ],
+      "id": "54bcd991-518d-4fde-9e1c-72a2acd96af4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "bJM1rlSsukNWzp01",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "764b467a-92ac-45ad-a1b5-3ef5f1dae6c7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0014f6159574d5a6d32ff637b744a22d6babf5dd9a117ee585233a7d5832b991"
+  },
+  "nodeGroups": [],
+  "id": "EVxy5UbeJyFfVt5F",
+  "tags": []
+}
